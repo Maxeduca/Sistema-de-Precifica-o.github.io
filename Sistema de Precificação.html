@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Precificação 3.0</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+
+body{
+font-family:'Inter',sans-serif;
+background:#0f172a;
+color:#e5e7eb;
+display:flex;
+flex-direction:column;
+padding:20px 40px;
+height:100vh;
+overflow:hidden;
+}
+
+h2{margin:0 0 18px;font-size:28px;font-weight:700}
+
+.dashboard{
+flex:1;
+display:grid;
+grid-template-columns:2.4fr 1.6fr;
+gap:28px;
+min-height:0;
+}
+
+.col-esquerda{
+display:grid;
+grid-template-rows:auto auto auto auto;
+gap:16px;
+overflow:auto;
+}
+
+.section{
+background:#111c33;
+padding:16px;
+border-radius:14px;
+border:1px solid rgba(255,255,255,0.05);
+}
+
+.section h3{
+margin:0 0 12px;
+font-size:16px;
+color:#60a5fa;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:12px;
+}
+
+.campo label{
+font-size:11px;
+color:#94a3b8;
+text-transform:uppercase;
+display:block;
+margin-bottom:4px;
+}
+
+.campo input{
+height:42px;
+font-size:16px;
+padding:0 12px;
+background:#0b1426;
+border:1px solid #1f2a44;
+border-radius:8px;
+color:#fff;
+}
+
+.resultado{
+background:#111c33;
+border-radius:18px;
+border:1px solid rgba(255,255,255,0.06);
+display:flex;
+flex-direction:column;
+padding:24px;
+}
+
+.titulo-resultados{
+text-align:center;
+font-size:14px;
+letter-spacing:6px;
+color:#60a5fa;
+margin-bottom:12px;
+}
+
+.result{
+font-size:42px;
+font-weight:800;
+text-align:center;
+margin-bottom:6px;
+}
+
+.subinfo{
+text-align:center;
+font-size:14px;
+font-weight:600;
+margin-bottom:12px;
+}
+
+.verde{color:#22c55e}
+.amarelo{color:#facc15}
+.vermelho{color:#ef4444}
+
+.divisor{
+height:1px;
+background:rgba(255,255,255,0.08);
+margin:12px 0;
+}
+
+.bloco-metricas{
+font-size:13px;
+line-height:1.6;
+flex:1;
+overflow:auto;
+}
+
+.barra{
+height:10px;
+background:#1f2a44;
+border-radius:8px;
+overflow:hidden;
+margin-top:10px;
+}
+
+.barra span{
+display:block;
+height:100%;
+width:0%;
+transition:0.3s;
+background:#3b82f6;
+}
+
+.btn-limpar{
+height:50px;
+border:none;
+border-radius:10px;
+background:#1f2a44;
+color:#94a3b8;
+font-weight:700;
+font-size:16px;
+cursor:not-allowed;
+margin-top:12px;
+}
+
+.btn-limpar.ativo{
+background:#3b82f6;
+color:#fff;
+cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Sistema de Precificação</h2>
+
+<div class="dashboard">
+
+<div class="col-esquerda">
+
+<div class="section">
+<h3>Custos Diretos</h3>
+<div class="grid">
+<div class="campo"><label>Produto (R$)</label><input type="text" id="produto"></div>
+<div class="campo"><label>Frete (R$)</label><input type="text" id="frete"></div>
+<div class="campo"><label>Embalagem (R$)</label><input type="text" id="embalagem"></div>
+<div class="campo"><label>Outros (R$)</label><input type="text" id="outrosDiretos"></div>
+</div>
+</div>
+
+<div class="section">
+<h3>Taxas (%)</h3>
+<div class="grid">
+<div class="campo"><label>Comissão</label><input type="number" id="comissao"></div>
+<div class="campo"><label>Imposto</label><input type="number" id="imposto"></div>
+<div class="campo"><label>Ads</label><input type="number" id="ads"></div>
+</div>
+</div>
+
+<div class="section">
+<h3>Custos Fixos</h3>
+<div class="grid">
+<div class="campo"><label>Aluguel (R$)</label><input type="text" id="aluguel"></div>
+<div class="campo"><label>Energia (R$)</label><input type="text" id="energia"></div>
+<div class="campo"><label>Internet (R$)</label><input type="text" id="internet"></div>
+<div class="campo"><label>Salários (R$)</label><input type="text" id="salarios"></div>
+<div class="campo"><label>Pró-labore (R$)</label><input type="text" id="prolabore"></div>
+<div class="campo"><label>Sistemas (R$)</label><input type="text" id="sistemas"></div>
+<div class="campo"><label>Contabilidade (R$)</label><input type="text" id="contabilidade"></div>
+<div class="campo"><label>Outros 1 (R$)</label><input type="text" id="outrosFixos"></div>
+<div class="campo"><label>Outros 2 (R$)</label><input type="text" id="outrosFixos2"></div>
+<div class="campo"><label>Total de Vendas</label><input type="number" id="vendas"></div>
+</div>
+</div>
+
+<div class="section">
+<h3>Preço</h3>
+<div class="campo">
+<label>Preço de Venda (R$)</label>
+<input type="text" id="precoInformado">
+</div>
+</div>
+
+</div>
+
+<div class="resultado">
+<div class="titulo-resultados">RESULTADOS</div>
+<div class="result" id="principal">Resultado: -</div>
+<div class="subinfo" id="subinfo"></div>
+<div class="divisor"></div>
+<div class="bloco-metricas" id="metricas"></div>
+<div class="barra"><span id="barraMarketplace"></span></div>
+<div id="percentMarketplace" class="subinfo"></div>
+<button class="btn-limpar" id="btnLimpar" disabled>Limpar Tudo</button>
+</div>
+
+</div>
+
+<script>
+
+// ========================
+// UTILITÁRIOS
+// ========================
+
+function parseValor(v){
+if(!v) return 0;
+return parseFloat(v.replace(/\./g,"").replace(",",".") ) || 0;
+}
+
+function formatarCampo(input){
+if(input.type==="number") return;
+let valor=parseValor(input.value);
+if(valor===0){input.value="";return;}
+input.value=valor.toLocaleString("pt-BR",{minimumFractionDigits:2});
+}
+
+// ========================
+// CAPTURA DE DADOS
+// ========================
+
+function capturar(){
+return {
+produto:parseValor(produto.value),
+frete:parseValor(frete.value),
+embalagem:parseValor(embalagem.value),
+outrosDiretos:parseValor(outrosDiretos.value),
+aluguel:parseValor(aluguel.value),
+energia:parseValor(energia.value),
+internet:parseValor(internet.value),
+salarios:parseValor(salarios.value),
+prolabore:parseValor(prolabore.value),
+sistemas:parseValor(sistemas.value),
+contabilidade:parseValor(contabilidade.value),
+outrosFixos:parseValor(outrosFixos.value),
+outrosFixos2:parseValor(outrosFixos2.value),
+vendas:parseFloat(vendas.value)||0,
+preco:parseValor(precoInformado.value),
+comissao:parseFloat(comissao.value)||0,
+imposto:parseFloat(imposto.value)||0,
+ads:parseFloat(ads.value)||0
+};
+}
+
+// ========================
+// MOTOR MATEMÁTICO
+// ========================
+
+function motor(d){
+
+const custoDireto = d.produto + d.frete + d.embalagem + d.outrosDiretos;
+
+const fixosTotal =
+d.aluguel + d.energia + d.internet + d.salarios +
+d.prolabore + d.sistemas + d.contabilidade +
+d.outrosFixos + d.outrosFixos2;
+
+const rateio = d.vendas>0 ? fixosTotal/d.vendas : 0;
+
+const taxaPerc = d.comissao + d.imposto + d.ads;
+const taxaValor = d.preco*(taxaPerc/100);
+
+const custoTotalUnit = custoDireto + rateio;
+
+const lucroOperacional = d.preco - custoDireto - taxaValor;
+const lucroLiquido = d.preco - custoTotalUnit - taxaValor;
+
+const margem = d.preco>0 ? (lucroLiquido/d.preco)*100 : 0;
+const markup = custoTotalUnit>0 ? d.preco/custoTotalUnit : 0;
+const roi = custoTotalUnit>0 ? (lucroLiquido/custoTotalUnit)*100 : 0;
+
+const pontoEquilibrio =
+(1-(taxaPerc/100))>0 ? custoTotalUnit/(1-(taxaPerc/100)) : 0;
+
+const lucroMensal = lucroLiquido*d.vendas;
+
+let cor="vermelho";
+let status="PREJUÍZO";
+
+if(margem>5){cor="verde";status="LUCRATIVO";}
+else if(margem>0){cor="amarelo";status="MARGEM BAIXA";}
+
+let score=0;
+if(margem>15)score+=40;
+else if(margem>5)score+=25;
+else if(margem>0)score+=10;
+
+if(roi>30)score+=30;
+else if(roi>15)score+=20;
+else if(roi>5)score+=10;
+
+return {
+custoDireto,fixosTotal,rateio,custoTotalUnit,
+taxaPerc,taxaValor,
+lucroOperacional,lucroLiquido,
+margem,markup,roi,
+pontoEquilibrio,
+lucroMensal,
+cor,status,score
+};
+}
+
+// ========================
+// RENDERIZAÇÃO
+// ========================
+
+function render(r,d){
+
+principal.innerHTML="R$ "+r.lucroLiquido.toLocaleString("pt-BR",{minimumFractionDigits:2});
+principal.className="result "+r.cor;
+
+subinfo.innerHTML=
+r.status+
+" | Margem: "+r.margem.toFixed(2)+"%"+
+" | ROI: "+r.roi.toFixed(2)+"%"+
+" | Score: "+r.score;
+
+metricas.innerHTML=
+"Receita Bruta: R$ "+d.preco.toLocaleString("pt-BR",{minimumFractionDigits:2})+"<br>"+
+"Custo Direto: R$ "+r.custoDireto.toLocaleString("pt-BR",{minimumFractionDigits:2})+"<br>"+
+"Custo Total Unitário: R$ "+r.custoTotalUnit.toLocaleString("pt-BR",{minimumFractionDigits:2})+"<br>"+
+"Total em Taxas: R$ "+r.taxaValor.toLocaleString("pt-BR",{minimumFractionDigits:2})+
+" ("+r.taxaPerc.toFixed(2)+"%)<br>"+
+"Lucro Operacional: R$ "+r.lucroOperacional.toLocaleString("pt-BR",{minimumFractionDigits:2})+"<br>"+
+"Lucro Mensal Estimado: R$ "+r.lucroMensal.toLocaleString("pt-BR",{minimumFractionDigits:2})+"<br>"+
+"Ponto de Equilíbrio: R$ "+r.pontoEquilibrio.toLocaleString("pt-BR",{minimumFractionDigits:2});
+
+barraMarketplace.style.width=r.taxaPerc+"%";
+percentMarketplace.innerHTML="Taxas consomem "+r.taxaPerc.toFixed(2)+"% do preço";
+}
+
+// ========================
+// CONTROLE
+// ========================
+
+function calcular(){
+const dados=capturar();
+const resultado=motor(dados);
+render(resultado,dados);
+}
+
+document.querySelectorAll("input").forEach(i=>{
+i.addEventListener("input",calcular);
+i.addEventListener("blur",()=>formatarCampo(i));
+});
+
+btnLimpar.addEventListener("click",()=>{
+document.querySelectorAll("input").forEach(i=>i.value="");
+principal.innerHTML="Resultado: -";
+subinfo.innerHTML="";
+metricas.innerHTML="";
+barraMarketplace.style.width="0%";
+percentMarketplace.innerHTML="";
+});
+
+</script>
+
+</body>
+</html>
